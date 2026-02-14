@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | CampusVote</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-card {
+            border: none;
+            border-radius: 2rem;
+            background: #ffffff;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .profile-header {
+            background: var(--primary-gradient);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .profile-avatar-circle {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge-approved { background-color: #dcfce7; color: #166534; }
+        .badge-pending { background-color: #fef3c7; color: #92400e; }
+
+        .btn-back {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #e2e8f0;
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container d-flex justify-content-center">
+        <div class="profile-card shadow">
+            <div class="profile-header">
+                <div class="profile-avatar-circle">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <h3 class="fw-bold mb-0">{{ user['fullname'] }}</h3>
+                <p class="opacity-75 mb-0 small">Registered Student Voter</p>
+            </div>
+
+            <div class="p-4 p-md-5">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="info-label">Roll Number</div>
+                        <div class="info-value">{{ user['roll_no'] }}</div>
+                    </div>
+                    <div class="col-6 text-end">
+                        <div class="info-label">Department</div>
+                        <div class="info-value">{{ user['dept'] }}</div>
+                    </div>
+                </div>
+
+                <div class="info-label">Email Address</div>
+                <div class="info-value">{{ user['email'] }}</div>
+
+                <div class="info-label">Account Status</div>
+                <div class="mt-2">
+                    {% if user['is_approved'] == 1 %}
+                    <span class="status-badge badge-approved">
+                        <i class="bi bi-check-circle-fill"></i> Verified Account
+                    </span>
+                    {% else %}
+                    <span class="status-badge badge-pending">
+                        <i class="bi bi-clock-history"></i> Approval Pending
+                    </span>
+                    {% endif %}
+                </div>
+
+                <hr class="my-4 opacity-50">
+
+                <div class="text-center">
+                    <a href="javascript:history.back()" class="btn btn-back w-100">
+                        <i class="bi bi-arrow-left me-2"></i> Return to Previous Page
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

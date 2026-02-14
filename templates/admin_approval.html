@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Approval | CampusVote Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .navbar {
+            background: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Management Table Styling */
+        .mgmt-card {
+            border: none;
+            border-radius: 1.5rem;
+            background: #ffffff;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .table thead th {
+            background-color: #f8fafc;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            padding: 1.25rem 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .table tbody td {
+            padding: 1.25rem 1rem;
+            vertical-align: middle;
+        }
+
+        /* Status Badges */
+        .status-pill {
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .status-pending { background-color: #fff7ed; color: #9a3412; }
+        .status-approved { background-color: #f0fdf4; color: #166534; }
+
+        /* Action Buttons */
+        .btn-approve {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 0.6rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-approve:hover { background-color: #059669; color: white; transform: scale(1.05); }
+
+        .btn-reject {
+            background-color: #fee2e2;
+            color: #dc2626;
+            border: none;
+            border-radius: 0.6rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-reject:hover { background-color: #fecaca; color: #b91c1c; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg sticky-top mb-5">
+        <div class="container">
+            <a class="navbar-brand fs-3" href="{{ url_for('admin_dashboard') }}">
+                <i class="bi bi-people-fill"></i> Voter Management
+            </a>
+            <div class="d-flex">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-light btn-sm fw-bold px-3 border me-2">
+                    <i class="bi bi-house-door me-1"></i> Dashboard
+                </a>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm fw-bold px-3">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="fw-bold mb-1">Account Approvals</h2>
+                <p class="text-secondary">Review and manage voter registration requests.</p>
+            </div>
+        </div>
+
+        <div class="mgmt-card">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Student Details</th>
+                            <th>Department</th>
+                            <th class="text-center">Current Status</th>
+                            <th class="text-end pe-4">Manage Access</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark">{{ user.fullname }}</div>
+                                <div class="text-muted small">{{ user.roll_no }} | {{ user.email }}</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-primary border px-3 rounded-pill">{{ user.dept }}</span>
+                            </td>
+                            <td class="text-center">
+                                {% if user.is_approved == 1 %}
+                                <span class="status-pill status-approved">
+                                    <i class="bi bi-check-circle-fill"></i> Active
+                                </span>
+                                {% else %}
+                                <span class="status-pill status-pending">
+                                    <i class="bi bi-clock-history"></i> Pending
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                {% if user.is_approved == 0 %}
+                                <div class="btn-group shadow-sm">
+                                    <a href="{{ url_for('approve_user', user_id=user.id) }}" class="btn btn-approve btn-sm px-3 py-2">
+                                        Approve
+                                    </a>
+                                    <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-reject btn-sm px-3 py-2" 
+                                       onclick="return confirm('Reject and delete this registration permanently?')">
+                                        Reject
+                                    </a>
+                                </div>
+                                {% else %}
+                                <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-outline-danger btn-sm px-3"
+                                   onclick="return confirm('Remove this user? They will lose all voting access.')">
+                                    Revoke Access
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5">
+                                <i class="bi bi-person-check fs-1 text-muted opacity-25 d-block mb-3"></i>
+                                <p class="text-secondary fw-medium">No pending registration requests found.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

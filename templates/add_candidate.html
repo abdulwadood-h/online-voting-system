@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Candidates | CampusVote</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --body-bg: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
+            color: #1e293b;
+        }
+
+        /* Modern Navbar */
+        .navbar {
+            background: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Card & UI Elements */
+        .card {
+            border: none;
+            border-radius: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.04);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            background-color: #f9fafb;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Candidate Image Styling */
+        .candidate-img {
+            width: 55px;
+            height: 55px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-add {
+            background: var(--primary-gradient);
+            border: none;
+            padding: 0.85rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Table Styling */
+        .table-container {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .table thead th {
+            background-color: #f8fafc;
+            padding: 1.25rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table tbody td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .party-tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg sticky-top mb-5">
+        <div class="container">
+            <a class="navbar-brand fs-4" href="{{ url_for('admin_dashboard') }}">
+                <i class="bi bi-person-plus-fill"></i> Candidate Nomination
+            </a>
+            <div class="d-flex">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-light btn-sm fw-bold px-3 me-2 border">
+                    <i class="bi bi-arrow-left me-1"></i> Dashboard
+                </a>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm fw-bold px-3">
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card p-4 border-0 shadow-sm">
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-1">New Candidate</h5>
+                        <p class="text-muted small">Election: <strong>{{ election.title }}</strong></p>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="Candidate Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <input type="text" name="dept" class="form-control" placeholder="e.g. Computer Science" required>
+                        </div>
+                       <div class="mb-3">
+                            <label class="form-label">Candidate Roll Number</label>
+                            <input type="text" name="roll_no" class="form-control" 
+                            placeholder="13-digit Student ID" 
+                            pattern="[0-9]{13}" 
+                            title="Roll number must be exactly 13 digits" 
+                            maxlength="13" required>
+                            <div class="form-text">Must be the candidate's official 13-digit ID.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Candidate Photo</label>
+                            <input type="file" name="photo" class="form-control" accept="image/*">
+                            <div class="form-text mt-2"><i class="bi bi-info-circle me-1"></i> Use a professional square photo.</div>
+                        </div>
+                        <button type="submit" class="btn btn-add w-100 shadow-sm">
+                            <i class="bi bi-plus-lg me-1"></i> Add Candidate
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="table-container shadow-sm">
+                    <div class="p-4 border-bottom bg-white">
+                        <h5 class="fw-bold mb-0">Nomination List</h5>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Department</th>
+                                    <th class="text-end">Roll No.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cand in candidates %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ url_for('static', filename='uploads/' + cand.photo) }}" 
+                                                 class="candidate-img me-3" alt="Profile">
+                                            <div>
+                                                <div class="fw-bold text-dark">{{ cand.name }}</div>
+                                                <div class="text-muted small">ID: #{{ cand.id }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-secondary fw-medium">{{ cand.dept }}</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="party-tag">{{ cand.roll_no }}</span>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center py-5">
+                                        <i class="bi bi-people fs-1 text-muted d-block mb-3"></i>
+                                        <p class="text-secondary fw-medium">No candidates nominated yet.</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

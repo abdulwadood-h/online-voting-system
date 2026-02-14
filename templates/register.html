@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | CampusVote</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --secondary-bg: #f9fafb;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.08) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .reg-card {
+            border: none;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .reg-header {
+            background: var(--primary-gradient);
+            padding: 2.5rem 1rem;
+            color: white;
+            position: relative;
+        }
+
+        .reg-header i {
+            font-size: 2.5rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-label {
+            color: #374151;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.025em;
+        }
+
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background-color: var(--secondary-bg);
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #ffffff;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-register {
+            background: var(--primary-gradient);
+            border: none;
+            padding: 0.85rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+            opacity: 0.95;
+        }
+
+        .btn-register:active {
+            transform: scale(0.98);
+        }
+
+        .login-link {
+            color: #4f46e5;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+        .approval-notice {
+            font-size: 0.75rem;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="reg-card">
+                    <div class="reg-header text-center">
+                        <i class="bi bi-person-badge-fill"></i>
+                        <h3 class="fw-bold mb-1">Create Voter Account</h3>
+                        <p class="small mb-0 opacity-75">Join your campus digital democracy</p>
+                    </div>
+
+                    <div class="card-body p-4 p-lg-5">
+                        <form action="/register" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-uppercase">Full Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0" style="border-radius: 0.75rem 0 0 0.75rem;">
+                                        <i class="bi bi-person text-muted"></i>
+                                    </span>
+                                    <input type="text" name="fullname" class="form-control border-start-0" 
+                                           placeholder="e.g. Abdul Wadood" required style="border-radius: 0 0.75rem 0.75rem 0;">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-uppercase">Roll Number</label>
+                                    <input type="text" name="roll_no" class="form-control" 
+                                           placeholder="13-digit ID" 
+                                           pattern="[0-9]{13}" 
+                                           maxlength="13" 
+                                           title="Please enter exactly 13 digits" 
+                                           required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-uppercase">Department</label>
+                                    <select name="dept" class="form-select" required>
+                                        <option value="" disabled selected>Select...</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Information Technology">Information Technology</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-uppercase">College Email</label>
+                                <input type="email" name="email" class="form-control" placeholder="name@college.edu" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold text-uppercase">Secure Password</label>
+                                <input type="password" name="password" class="form-control" 
+                                       placeholder="6-8 characters" 
+                                       minlength="6" 
+                                       maxlength="8" 
+                                       required>
+                                <div class="form-text small" style="font-size: 0.7rem;">Length must be 6-8 characters.</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-register w-100 shadow-sm text-white">
+                                Register as Voter
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="card-footer bg-light border-0 py-4 text-center">
+                        <p class="mb-2">Already have an account? <a href="{{ url_for('login') }}" class="login-link">Sign In</a></p>
+                        <div class="approval-notice">
+                            <i class="bi bi-shield-lock"></i> Account activation requires Admin approval
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

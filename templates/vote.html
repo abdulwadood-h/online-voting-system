@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cast Your Vote | {{ title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --selection-color: #4f46e5;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .ballot-header {
+            background: #ffffff;
+            padding: 4rem 0 3rem;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 4rem;
+        }
+
+        .vote-card {
+            background: #ffffff;
+            border: 2px solid transparent;
+            border-radius: 2rem;
+            padding: 2.5rem 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vote-card:hover {
+            transform: translateY(-5px);
+            background: #ffffff;
+            border-color: #e2e8f0;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Hidden Radio Logic */
+        input[type="radio"]:checked + .vote-card {
+            border-color: var(--selection-color);
+            background-color: #f5f3ff;
+            box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Candidate Image Styling */
+        .img-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .candidate-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        input[type="radio"]:checked + .vote-card .candidate-img {
+            transform: scale(1.05);
+            border-color: var(--selection-color);
+        }
+
+        /* Selection Indicator Badge */
+        .check-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 32px;
+            height: 32px;
+            background: var(--selection-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        input[type="radio"]:checked + .vote-card .check-badge {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .party-pill {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-confirm {
+            background: var(--primary-gradient);
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 1rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="ballot-header text-center">
+        <div class="container">
+            <a href="{{ url_for('student_dashboard') }}" class="btn btn-light btn-sm rounded-pill px-3 mb-3 border">
+                <i class="bi bi-arrow-left me-1"></i> Cancel & Exit
+            </a>
+            <h1 class="fw-bold mb-2">{{ title }}</h1>
+            <p class="text-secondary fs-5">Please select one candidate to cast your secure vote.</p>
+        </div>
+    </header>
+
+    <div class="container pb-5">
+        <form method="POST">
+            <div class="row justify-content-center">
+                {% for cand in candidates %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <label class="w-100 cursor-pointer">
+                        <input type="radio" name="candidate_id" value="{{ cand.id }}" class="d-none" required>
+                        <div class="card vote-card text-center shadow-sm">
+                            <div class="check-badge shadow">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+
+                            <div class="img-wrapper">
+                                <img src="{{ url_for('static', filename='uploads/' + cand.photo) }}" 
+                                     class="candidate-img" 
+                                     alt="{{ cand.name }}"
+                                     onerror="this.src='/static/uploads/default.png'">
+                            </div>
+
+                            <h3 class="fw-bold mb-1">{{ cand.name }}</h3>
+                            <p class="text-muted small mb-0">{{ cand.dept }}</p>
+                            
+                            <div class="party-pill">
+                                {{ cand.party }}
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-center mt-5">
+                <div class="card bg-white d-inline-block p-4 rounded-4 shadow-sm border">
+                    <p class="small text-muted mb-3"><i class="bi bi-shield-lock-fill me-1"></i> Your vote is encrypted and anonymous.</p>
+                    <button type="submit" class="btn btn-primary btn-confirm shadow text-white">
+                        Confirm & Submit Vote
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | CampusVote</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.1) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .brand-header {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .input-group-text {
+            background-color: #f9fafb;
+            border-right: none;
+            color: #9ca3af;
+            border-radius: 0.75rem 0 0 0.75rem;
+            padding-left: 1.25rem;
+        }
+
+        .form-control {
+            background-color: #f9fafb;
+            border-left: none;
+            padding: 0.75rem 1.25rem 0.75rem 0.5rem;
+            border-radius: 0 0.75rem 0.75rem 0;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            box-shadow: none;
+            border-color: #dee2e6;
+        }
+
+        .form-control:focus + .input-group-text {
+            background-color: #ffffff;
+        }
+
+        .btn-login {
+            background: var(--primary-gradient);
+            border: none;
+            padding: 0.85rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            color: white;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+            opacity: 0.95;
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        .alert {
+            border-radius: 0.75rem;
+            border: none;
+        }
+
+        .back-home {
+            color: #6b7280;
+            transition: color 0.2s;
+        }
+
+        .back-home:hover {
+            color: #4f46e5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container login-container">
+        <div class="w-100" style="max-width: 400px;">
+            
+            <div class="text-center mb-5">
+                <h2 class="brand-header fs-1 mb-1">
+                    <i class="bi bi-shield-lock-fill"></i> CampusVote
+                </h2>
+                <p class="text-secondary fw-medium">Secure Student Login Portal</p>
+            </div>
+
+            <div class="login-card p-4 p-lg-5">
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show small mb-4" role="alert">
+                                <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form action="/login" method="POST">
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase tracking-wider text-muted">Roll Number/Admin ID</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                            <input type="text" name="roll_no" class="form-control" placeholder="Student ID" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="form-label small fw-bold text-uppercase tracking-wider text-muted">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-login w-100 shadow-sm">
+                        Sign In to Portal
+                    </button>
+                </form>
+
+                <div class="mt-5 text-center">
+                    <p class="small text-muted mb-0">Don't have an account?</p>
+                    <a href="{{ url_for('register') }}" class="fw-bold text-primary text-decoration-none">Create a Voter Profile</a>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ url_for('index') }}" class="back-home small text-decoration-none fw-medium">
+                    <i class="bi bi-arrow-left-short"></i> Return to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
