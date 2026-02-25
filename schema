@@ -20,6 +20,7 @@ CREATE TABLE elections (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     position VARCHAR(100) NOT NULL,
+    dept VARCHAR(50) NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     status ENUM('active', 'inactive') DEFAULT 'active'
@@ -31,6 +32,8 @@ CREATE TABLE candidates (
     name VARCHAR(100) NOT NULL,
     dept VARCHAR(50) NOT NULL,
     party VARCHAR(50) DEFAULT 'Independent',
+    roll_no VARCHAR(20) NOT NULL,
+    photo VARCHAR(255) DEFAULT 'default.png';
     FOREIGN KEY (election_id) REFERENCES elections(id) ON DELETE CASCADE
 );
 
