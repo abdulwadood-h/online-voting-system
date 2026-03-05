@@ -91,6 +91,12 @@
             transition: all 0.2s;
         }
         .btn-reject:hover { background-color: #fecaca; color: #b91c1c; }
+        
+        /* Checkbox styling */
+        .form-check-input:checked {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
     </style>
 </head>
 <body>
@@ -110,77 +116,103 @@
     </nav>
 
     <div class="container pb-5">
-        <div class="row mb-4">
-            <div class="col">
-                <h2 class="fw-bold mb-1">Account Approvals</h2>
-                <p class="text-secondary">Review and manage voter registration requests.</p>
+        <form action="{{ url_for('approve_multiple') }}" method="POST">
+            <div class="row mb-4 align-items-end">
+                <div class="col">
+                    <h2 class="fw-bold mb-1">Account Approvals</h2>
+                    <p class="text-secondary mb-0">Review and manage voter registration requests.</p>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-approve px-4 py-2 shadow-sm">
+                        <i class="bi bi-check-all me-1"></i> Approve Selected
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <div class="mgmt-card">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th class="ps-4">Student Details</th>
-                            <th>Department</th>
-                            <th class="text-center">Current Status</th>
-                            <th class="text-end pe-4">Manage Access</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in users %}
-                        <tr>
-                            <td class="ps-4">
-                                <div class="fw-bold text-dark">{{ user.fullname }}</div>
-                                <div class="text-muted small">{{ user.roll_no }} | {{ user.email }}</div>
-                            </td>
-                            <td>
-                                <span class="badge bg-light text-primary border px-3 rounded-pill">{{ user.dept }}</span>
-                            </td>
-                            <td class="text-center">
-                                {% if user.is_approved == 1 %}
-                                <span class="status-pill status-approved">
-                                    <i class="bi bi-check-circle-fill"></i> Active
-                                </span>
-                                {% else %}
-                                <span class="status-pill status-pending">
-                                    <i class="bi bi-clock-history"></i> Pending
-                                </span>
-                                {% endif %}
-                            </td>
-                            <td class="text-end pe-4">
-                                {% if user.is_approved == 0 %}
-                                <div class="btn-group shadow-sm">
-                                    <a href="{{ url_for('approve_user', user_id=user.id) }}" class="btn btn-approve btn-sm px-3 py-2">
-                                        Approve
+            <div class="mgmt-card">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4" style="width: 40px;">
+                                    <input class="form-check-input" type="checkbox" id="selectAll">
+                                </th>
+                                <th>Student Details</th>
+                                <th>Department</th>
+                                <th class="text-center">Current Status</th>
+                                <th class="text-end pe-4">Manage Access</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td class="ps-4">
+                                    {% if user.is_approved == 0 %}
+                                    <input class="form-check-input user-checkbox" type="checkbox" name="user_ids" value="{{ user.id }}">
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ user.fullname }}</div>
+                                    <div class="text-muted small">{{ user.roll_no }} | {{ user.email }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-primary border px-3 rounded-pill">{{ user.dept }}</span>
+                                </td>
+                                <td class="text-center">
+                                    {% if user.is_approved == 1 %}
+                                    <span class="status-pill status-approved">
+                                        <i class="bi bi-check-circle-fill"></i> Active
+                                    </span>
+                                    {% else %}
+                                    <span class="status-pill status-pending">
+                                        <i class="bi bi-clock-history"></i> Pending
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    {% if user.is_approved == 0 %}
+                                    <div class="btn-group shadow-sm">
+                                        <a href="{{ url_for('approve_user', user_id=user.id) }}" class="btn btn-approve btn-sm px-3 py-2">
+                                            Approve
+                                        </a>
+                                        <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-reject btn-sm px-3 py-2" 
+                                           onclick="return confirm('Reject and delete this registration permanently?')">
+                                            Reject
+                                        </a>
+                                    </div>
+                                    {% else %}
+                                    <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-outline-danger btn-sm px-3"
+                                       onclick="return confirm('Remove this user? They will lose all voting access.')">
+                                        Revoke Access
                                     </a>
-                                    <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-reject btn-sm px-3 py-2" 
-                                       onclick="return confirm('Reject and delete this registration permanently?')">
-                                        Reject
-                                    </a>
-                                </div>
-                                {% else %}
-                                <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-outline-danger btn-sm px-3"
-                                   onclick="return confirm('Remove this user? They will lose all voting access.')">
-                                    Revoke Access
-                                </a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="4" class="text-center py-5">
-                                <i class="bi bi-person-check fs-1 text-muted opacity-25 d-block mb-3"></i>
-                                <p class="text-secondary fw-medium">No pending registration requests found.</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <i class="bi bi-person-check fs-1 text-muted opacity-25 d-block mb-3"></i>
+                                    <p class="text-secondary fw-medium">No pending registration requests found.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
+    <script>
+        // Select All Checkboxes Logic
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.user-checkbox');
+
+        selectAll.addEventListener('change', function() {
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+        });
+    </script>
 </body>
 </html>
