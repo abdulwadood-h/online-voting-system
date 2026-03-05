@@ -33,8 +33,7 @@ CREATE TABLE candidates (
     dept VARCHAR(50) NOT NULL,
     party VARCHAR(50) DEFAULT 'Independent',
     roll_no VARCHAR(20) NOT NULL,
-    photo VARCHAR(255) DEFAULT 'default.png';
-    FOREIGN KEY (election_id) REFERENCES elections(id) ON DELETE CASCADE
+    photo VARCHAR(255) DEFAULT 'default.png'
 );
 
 CREATE TABLE votes (
