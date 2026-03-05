@@ -20,11 +20,10 @@
             color: #1e293b;
         }
 
-        /* Modern Glass Navbar */
         .navbar {
             background: #ffffff !important;
             border-bottom: 1px solid #e2e8f0;
-            padding: 1rem 0;
+            padding: 0.8rem 0;
             backdrop-filter: blur(10px);
         }
 
@@ -37,7 +36,22 @@
             letter-spacing: -0.5px;
         }
 
-        /* Hero Greeting Section */
+        /* Profile Link Hover Effects */
+        .profile-link {
+            transition: all 0.2s ease;
+            padding: 5px 12px;
+            border-radius: 12px;
+            text-decoration: none !important;
+        }
+
+        .profile-link:hover {
+            background-color: #f1f5f9;
+        }
+
+        .profile-link:hover .profile-name {
+            color: #4f46e5 !important;
+        }
+
         .dashboard-header {
             padding: 3rem 0;
             background: #ffffff;
@@ -45,7 +59,6 @@
             margin-bottom: 3rem;
         }
 
-        /* Election Action Cards */
         .election-card {
             border: none;
             border-radius: 1.5rem;
@@ -56,11 +69,11 @@
 
         .election-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
         .status-pill {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             font-weight: 700;
             padding: 0.5rem 1rem;
@@ -77,14 +90,10 @@
             transition: all 0.3s ease;
         }
 
-        .btn-vote:hover {
-            opacity: 0.9;
-            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
-        }
-
         .voted-badge {
-            background: #f1f5f9;
-            color: #64748b;
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
             border-radius: 0.8rem;
             padding: 0.8rem;
             font-weight: 600;
@@ -106,21 +115,27 @@
 
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand fs-3" href="#">
+            <a class="navbar-brand fs-3" href="{{ url_for('student_dashboard') }}">
                 <i class="bi bi-shield-check-fill"></i> CampusVote
             </a>
+            
             <div class="d-flex align-items-center">
-                <div class="text-end me-3 d-none d-md-block">
-                    <small class="text-muted d-block">Voter Profile</small>
-                    <span class="fw-bold">{{ session['name'] }}</span>
-                </div>
+                <a href="{{ url_for('profile') }}" class="profile-link d-flex align-items-center me-3">
+                    <div class="text-end me-2 d-none d-md-block">
+                        <small class="text-muted d-block" style="font-size: 0.7rem; text-transform: uppercase;">My Account</small>
+                        <span class="fw-bold text-dark profile-name">{{ session['fullname'] }}</span>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-2 rounded-circle">
+                        <i class="bi bi-person-circle text-primary fs-4"></i>
+                    </div>
+                </a>
+
                 <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm px-4 rounded-pill fw-bold">
                     Logout
                 </a>
             </div>
         </div>
     </nav>
-
     <header class="dashboard-header">
         <div class="container">
             <div class="row align-items-center">
@@ -146,8 +161,8 @@
                 <div class="card election-card h-100 p-4 shadow-sm">
                     <div class="card-body d-flex flex-column p-0">
                         <div class="d-flex justify-content-between align-items-start mb-4">
-                            <span class="status-pill bg-success-subtle text-success">
-                                <i class="bi bi-record-fill me-1"></i> Live
+                            <span class="status-pill {{ election.status_class }}">
+                                <i class="bi bi-record-fill me-1"></i> {{ election.status_label }}
                             </span>
                             <div class="bg-light p-2 rounded-3">
                                 <i class="bi bi-box-seam text-primary fs-4"></i>
@@ -163,16 +178,24 @@
                         <div class="mt-auto pt-4 border-top">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="small text-muted">Deadline:</span>
-                                <span class="small fw-bold text-danger">
+                                <span class="small fw-bold {% if election.status_label == 'Expired' %}text-danger{% else %}text-muted{% endif %}">
                                     <i class="bi bi-clock-history me-1"></i> {{ election.end_time }}
                                 </span>
                             </div>
 
-                            {% if election.id in voted %}
+                            {% if election.has_voted %}
                                 <div class="voted-badge">
                                     <i class="bi bi-check-circle-fill text-success"></i> 
                                     Vote Successfully Recorded
                                 </div>
+                            {% elif election.status_label == "Expired" %}
+                                <button class="btn btn-light w-100 border text-muted" disabled>
+                                    <i class="bi bi-lock-fill me-2"></i>Election Closed
+                                </button>
+                            {% elif election.status_label == "Upcoming" %}
+                                <button class="btn btn-light w-100 border text-muted" disabled>
+                                    <i class="bi bi-hourglass-split me-2"></i>Starts at {{ election.start_time }}
+                                </button>
                             {% else %}
                                 <a href="{{ url_for('vote', election_id=election.id) }}" class="btn btn-primary btn-vote w-100 text-white shadow-sm">
                                     Proceed to Ballot <i class="bi bi-arrow-right-short"></i>
@@ -189,10 +212,7 @@
                         <i class="bi bi-clipboard2-x text-muted" style="font-size: 4rem;"></i>
                     </div>
                     <h2 class="fw-bold">No Active Elections</h2>
-                    <p class="text-secondary px-md-5 mx-md-5">
-                        There are currently no polls open for the <strong>{{ session['dept'] }}</strong> department. 
-                        Please check back later or contact your campus administrator.
-                    </p>
+                    <p class="text-secondary">There are currently no polls open for the <strong>{{ session['dept'] }}</strong> department.</p>
                 </div>
             </div>
             {% endfor %}
