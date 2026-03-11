@@ -1,133 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Election Results | CampusVote</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        body { background-color: #f8fafc; font-family: 'Inter', sans-serif; }
-        .results-card {
-            border: none;
-            border-radius: 1.5rem;
-            background: white;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-        }
-        .winner-box {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 1px solid #bbf7d0;
-            border-radius: 1rem;
-            padding: 1.5rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Election Results | CampusVote</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<style>
+
+body{
+background-color:#f8fafc;
+font-family:'Inter',sans-serif;
+}
+
+.results-card{
+border:none;
+border-radius:1.5rem;
+background:white;
+box-shadow:0 10px 25px -5px rgba(0,0,0,0.05);
+}
+
+.winner-box{
+background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%);
+border:1px solid #bbf7d0;
+border-radius:1rem;
+padding:1.5rem;
+}
+
+</style>
 </head>
+
 <body>
 
 <nav class="navbar navbar-light bg-white border-bottom mb-5">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="{{ url_for('admin_dashboard') }}">
-            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
-        </a>
-        <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-printer me-1"></i> Print Report
-        </button>
-    </div>
+<div class="container">
+
+<a class="navbar-brand fw-bold text-primary" href="{{ url_for('admin_dashboard') }}">
+<i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+</a>
+
+<button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
+<i class="bi bi-printer me-1"></i> Print Report
+</button>
+
+</div>
 </nav>
 
 <div class="container mb-5">
-    <div class="text-center mb-5">
-        <h1 class="fw-bold">{{ title }}</h1>
-        <p class="text-muted">Official Election Standings</p>
-    </div>
 
-    <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="card results-card p-4">
-                <h5 class="fw-bold mb-4">Vote Distribution</h5>
-                <canvas id="resultsChart" style="max-height: 400px;"></canvas>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="winner-box mb-4 text-center">
-                <div class="display-6 text-success mb-2"><i class="bi bi-trophy-fill"></i></div>
-                <small class="text-uppercase fw-bold text-success opacity-75">Leading Candidate</small>
-                <h3 class="fw-bold mb-0">{{ labels[0] }}</h3>
-                <p class="text-success mb-0">{{ counts[0] }} Votes Received</p>
-            </div>
-
-            <div class="card results-card p-3">
-                <h6 class="fw-bold mb-3">Detailed Tally</h6>
-                <div class="table-responsive">
-                    <table class="table table-sm table-borderless">
-                        <thead>
-                            <tr class="text-muted small">
-                                <th>Candidate</th>
-                                <th class="text-end">Votes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in range(labels|length) %}
-                            <tr>
-                                <td class="fw-medium">{{ labels[i] }}</td>
-                                <td class="text-end fw-bold">{{ counts[i] }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="text-center mb-5">
+<h1 class="fw-bold">{{ title }}</h1>
+<p class="text-muted">Official Election Standings</p>
 </div>
 
+<div class="row g-4">
+
+<div class="col-lg-8">
+
+<div class="card results-card p-4">
+
+<h5 class="fw-bold mb-4">Vote Distribution</h5>
+
+<canvas id="resultsChart" style="max-height:400px;"></canvas>
+
+</div>
+
+</div>
+
+
+<div class="col-lg-4">
+
+<div class="winner-box mb-4 text-center">
+
+<div class="display-6 text-success mb-2">
+<i class="bi bi-trophy-fill"></i>
+</div>
+
+<small class="text-uppercase fw-bold text-success opacity-75">
+Winning Candidate
+</small>
+
+<h3 class="fw-bold mb-0">{{ labels[0] }}</h3>
+
+<p class="text-success mb-0">
+{{ counts[0] }} Votes
+</p>
+
+<p class="text-success fw-bold">
+<span id="winnerPercentage"></span>% of total votes
+</p>
+
+</div>
+
+
+<div class="card results-card p-3">
+
+<h6 class="fw-bold mb-3">Detailed Tally</h6>
+
+<div class="table-responsive">
+
+<table class="table table-sm table-borderless">
+
+<thead>
+<tr class="text-muted small">
+<th>Candidate</th>
+<th class="text-end">Votes</th>
+<th class="text-end">%</th>
+<th class="text-end">Difference</th>
+</tr>
+</thead>
+
+<tbody id="resultTable">
+
+{% for i in range(labels|length) %}
+<tr>
+<td class="fw-medium">{{ labels[i] }}</td>
+<td class="text-end fw-bold">{{ counts[i] }}</td>
+<td class="text-end percentage"></td>
+<td class="text-end difference"></td>
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
 <script>
-    const ctx = document.getElementById('resultsChart').getContext('2d');
-    
-    // Data from Flask
-    const labels = {{ labels|tojson }};
-    const counts = {{ counts|tojson }};
 
-    // This highlights the winner (first bar) in Purple, others in Grey
-    const backgroundColors = counts.map((_, index) => 
-        index === 0 ? 'rgba(79, 70, 229, 0.8)' : 'rgba(203, 213, 225, 0.6)'
-    );
-    const borderColors = counts.map((_, index) => 
-        index === 0 ? 'rgba(79, 70, 229, 1)' : 'rgba(148, 163, 184, 1)'
-    );
+const ctx = document.getElementById('resultsChart').getContext('2d');
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels, // Includes winner
-            datasets: [{
-                label: 'Votes Cast',
-                data: counts, // Includes winner's count
-                backgroundColor: backgroundColors,
-                borderColor: borderColors,
-                borderWidth: 1,
-                borderRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1, color: '#64748b' },
-                    grid: { borderDash: [5, 5] }
-                },
-                x: {
-                    ticks: { color: '#64748b', font: { weight: '600' } }
-                }
-            }
-        }
-    });
+const labels = {{ labels|tojson }};
+const counts = {{ counts|tojson }};
+
+
+// Total Votes
+
+const totalVotes = counts.reduce((a,b)=>a+b,0);
+
+
+// Calculate Percentages
+
+const percentages = counts.map(v => ((v/totalVotes)*100).toFixed(2));
+
+
+// Winner percentage
+
+document.getElementById("winnerPercentage").innerText = percentages[0];
+
+
+// Calculate difference with winner
+
+const differences = percentages.map(p => (percentages[0] - p).toFixed(2));
+
+
+// Update table
+
+const rows = document.querySelectorAll("#resultTable tr");
+
+rows.forEach((row,index)=>{
+
+row.querySelector(".percentage").innerText = percentages[index] + "%";
+
+if(index === 0)
+row.querySelector(".difference").innerHTML = '<span class="text-success fw-bold">Winner</span>';
+else
+row.querySelector(".difference").innerText = differences[index] + "%";
+
+});
+
+
+// Chart Colors
+
+const backgroundColors = counts.map((_,index)=>
+index===0 ? 'rgba(34,197,94,0.8)' : 'rgba(239,68,68,0.8)'
+);
+
+const borderColors = counts.map((_,index)=>
+index===0 ? 'rgba(34,197,94,1)' : 'rgba(220,38,38,1)'
+);
+
+
+// Chart
+
+new Chart(ctx,{
+type:'bar',
+
+data:{
+labels:labels,
+
+datasets:[{
+
+label:'Votes',
+
+data:counts,
+
+backgroundColor:backgroundColors,
+
+borderColor:borderColors,
+
+borderWidth:1,
+
+borderRadius:8
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+
+legend:{display:false},
+
+tooltip:{
+callbacks:{
+label:function(context){
+
+let index=context.dataIndex;
+
+return counts[index]+" votes ("+percentages[index]+"%)";
+
+}
+}
+}
+
+},
+
+scales:{
+
+y:{
+beginAtZero:true,
+ticks:{stepSize:1,color:'#64748b'},
+grid:{borderDash:[5,5]}
+},
+
+x:{
+ticks:{color:'#64748b',font:{weight:'600'}}
+}
+
+}
+
+}
+
+});
+
 </script>
 
 </body>
